@@ -2,7 +2,7 @@
 
 ###### Projeto realizado por:
 David Mendes (22203255)
-Gilherme Negrinho (Põe aqui o teu nº de aluno)
+Gilherme Negrinho (22207383)
 
 ###### Implementação das mecânicas:
     David Mendes:
