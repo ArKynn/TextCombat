@@ -8,7 +8,7 @@ class char_stats:
         stat.ap = ap
         stat.wp = wp
         stat.init = init
-        stat.roll = d20
+        stat.d20 = d20
 
 warrior = char_stats("warrior", 32, 5, 2, 5, 2, 0) #Warrior stats in order: Name, HP, MP, AP, WP, Init, dice roll
 
@@ -73,8 +73,8 @@ def initiative(): #Rolls a dice for each character and sorts them in order of mo
 
     for char in alive:
         char.d20 = d20() + char.init
-        atkorder = sorted(alive, key=lambda x: (x.roll)) # Code based on answer by user falsetru on StackOverflow (https://stackoverflow.com/questions/26310394/python-sort-a-list-of-objects-based-on-their-attributes)
-        print(atkorder)
+        atkorder = alive
+        atkorder.sort(key=lambda x: (x.d20), reverse = True) # Code based on answer by user Art on StackOverflow (https://stackoverflow.com/questions/67750705/python-sorting-based-on-class-attribute)
 
 def Round(): #Gets a character from the initiative order and calculate's its actions.
     def dmg_calc(attacking, defending):
@@ -96,7 +96,7 @@ def Round(): #Gets a character from the initiative order and calculate's its act
         if dmg_fin < 0:
             dmg_fin = 0
     
-    def exorcism(attacking, defending):
+    def exorcism(defending):
         dmg = d4 * 2
         dmg_fin = defending.ap - dmg
         if dmg_fin < 0:
@@ -106,17 +106,19 @@ def Round(): #Gets a character from the initiative order and calculate's its act
         heal = healer.wp + d6
         healed.hp = healed.hp + heal
 
-
-    for x in range(1,6): #Selects each character in order of initiative
-
-        if atkorder[x] in enemy: #if selected character is an enemy just calculates its dmg
+    num_char = -1 #This goes up by one as the code processes all the other characters' actions.
+    for x in atkorder: #Selects each character in order of initiative
+        num_char += 1
+        x = atkorder[num_char].name #gets the character name so the rest of the code can identify which character it is refering to
+        print(x)
+        if x in enemy: #if selected character is an enemy just calculates its dmg
             chosen = random.choice[warrior, priest] #chooses randomly between the 2 allied characters to attack
             chosen.hp = chosen.hp - dmg_calc(atkorder[x])
             current_char = atkorder[x].name
             print(f"\nEnemy {current_char} attacked allied {chosen} and dealt {dmg_calc} damage.")
             ui()
             
-        elif atkorder[x] in ally: #if selected character is an ally it enters the action screen
+        elif x in ally: #if selected character is an ally it enters the action screen
             print(f"It's time for {current_char} to do an action!\nWhat should {current_char} do?\nThe {current_char} can either Attack or cast Magic")
             action = input()
 
@@ -168,3 +170,4 @@ def Round(): #Gets a character from the initiative order and calculate's its act
 ui()
 alive()
 initiative()
+Round()
