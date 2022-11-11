@@ -5,16 +5,20 @@ import random
 # Introduction #
 ################
 
-print("WELCOME TO DRAGONS ADVENTURE! Seems like you are the choosen one to defeat the enemies that been destroying our village.")
-print("Yeah, nobody wanted the dirty work...（￣へ￣）")
-print()
-proceed = print(input("Would you like to meet your party and enemies? Y/N: "))
-if proceed  == ("N", "n"):
-    print ("Well, you don't really got a choice, let's continue ;)")
-else: 
-    print ("Great, let's get started!")
-
-
+while True:
+    print()
+    print("WELCOME TO DRAGONS ADVENTURE! Seems like you are the choosen one to defeat the enemies that been destroying our village.")
+    print("Yeah, nobody wanted the dirty work...（￣へ￣）")
+    print()
+    proceed = (input("Would you like to meet your party and enemies? Y/N: "))
+    if proceed  in ["N","n"]:
+        print ("Well, you don't really got a choice, let's continue ;)")
+    elif proceed in ["Y","y"]:
+        print ("Great, let's get started!")
+    else:
+        print()
+        print ("You are so unpredictable")
+        
 class char_stats:
     def __init__(stat, name, hp, mp, ap, wp, init, d20):
         stat.name = name
@@ -46,9 +50,9 @@ enemy = [orc, goblin, hobgoblin, kobold] #list of enemy chars
 
 ally = [warrior, priest] #list of allied chars
 
-###################
-# Combat Commands #
-###################
+####################
+# Combat Mechanics #
+####################
 
 atk_words = ["atk","Atk", "attack", "Attack"]
 
