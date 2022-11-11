@@ -1,4 +1,19 @@
-import random, os
+import os
+import random
+
+################
+# Introduction #
+################
+
+print("WELCOME TO DRAGONS ADVENTURE! Seems like you are the choosen one to defeat the enemies that been destroying our village.")
+print("Yeah, nobody wanted the dirty work...（￣へ￣）")
+print()
+proceed = print(input("Would you like to meet your party and enemies? Y/N: "))
+if proceed  == ("N", "n"):
+    print ("Well, you don't really got a choice, let's continue ;)")
+else: 
+    print ("Great, let's get started!")
+
 
 class char_stats:
     def __init__(stat, name, hp, mp, ap, wp, init, d20):
@@ -10,21 +25,30 @@ class char_stats:
         stat.init = init
         stat.roll = d20
 
-warrior = char_stats("warrior", 32, 5, 2, 5, 2, 0) #Warrior stats in order: Name, HP, MP, AP, WP, Init, dice roll
+#####################
+# Characters Status #
+#####################
+# Name, HP, MP, AP, WP, Init, dice roll
 
-priest = char_stats("priest", 20, 25, 0, 2, 6, 0) #Priest stats in order: Name, HP, MP, AP, WP, Init, dice roll
+warrior = char_stats("warrior", 32, 5, 2, 5, 2, 0)
 
-orc = char_stats("orc", 15, 0, 2, 2, 2, 0) #Orc stats in order: Name, HP, MP, AP, WP, Init, dice roll
+priest = char_stats("priest", 20, 25, 0, 2, 6, 0) 
 
-goblin = char_stats("goblin", 14, 0, 2, 2, 2, 0) #Goblin stats in order: Name, HP, MP, AP, WP, Init, dice roll
+orc = char_stats("orc", 15, 0, 2, 2, 2, 0) 
 
-hobgoblin = char_stats("hobgoblin", 13, 0, 2, 2, 2, 0) #Hobgoblin stats in order: Name, HP, MP, AP, WP, Init, dice roll
+goblin = char_stats("goblin", 14, 0, 2, 2, 2, 0) 
 
-kobold = char_stats("kobold", 12, 0, 2, 2, 2, 0) #Kobold stats in order: Name, HP, MP, AP, WP, Init, dice roll
+hobgoblin = char_stats("hobgoblin", 13, 0, 2, 2, 2, 0) 
+
+kobold = char_stats("kobold", 12, 0, 2, 2, 2, 0) 
 
 enemy = [orc, goblin, hobgoblin, kobold] #list of enemy chars
 
 ally = [warrior, priest] #list of allied chars
+
+###################
+# Combat Commands #
+###################
 
 atk_words = ["atk","Atk", "attack", "Attack"]
 
@@ -34,20 +58,25 @@ rushdown = ["Rushes into the enemy, tackling them into the ground. Inflicts betw
 
 exorcism = ["Corrupt and enemy's life essence. Inflicts between 2 and 8 damage. Costs 5 mana."]
 
-mend = ["Repay some of a character's current debt to the Death god. Heals a character between 3 and 8. Costs 3 mana."]
+mend = ["Repay some of a character's current debt to the Death God. Heals a character between 3 and 8. Costs 3 mana."]
+
+
+###############
+# Combat Zone #
+###############
 
 def ui(): #Basic ui (Might change later)
     clearconsole = lambda: os.system('cls' if os.name in ('nt', 'dos') else 'clear')
     clearconsole()
 
-    print("Enemy: Orc            Enemy: Goblin           Enemy: Hobgoblin           Enemy: Kobold")
-    print(f"HP:{orc.hp}                 HP:{goblin.hp}                   HP:{hobgoblin.hp}                      HP:{kobold.hp}")
+    print("Enemy: Orc                  Enemy: Goblin                   Enemy: Hobgoblin                           Enemy: Kobold")
+    print(f"HP:{orc.hp}                 HP:{goblin.hp}                   HP:{hobgoblin.hp}                         HP:{kobold.hp}")
     print(f"MP:{orc.mp}                  MP:{goblin.mp}                    MP:{hobgoblin.mp}                       MP:{kobold.mp}")
     print(f"AP:{orc.ap}                  AP:{goblin.ap}                    AP:{hobgoblin.ap}                       AP:{kobold.ap}")
     print(f"WP:{orc.wp}                  WP:{goblin.wp}                    WP:{hobgoblin.wp}                       WP:{kobold.wp}")
     print(f"Init:{orc.init}                Init:{goblin.init}                  Init:{hobgoblin.init}                     Init:{kobold.init}")
 
-    print(f"\n\n\n\n\n")
+    print(f"\n\n\n")
     print(f"Ally: Warrior               Ally: Priest")
     print(f"HP:{warrior.hp}                       HP:{priest.hp}")
     print(f"MP:{warrior.mp}                        MP:{priest.mp}")
@@ -164,7 +193,6 @@ def Round(): #Gets a character from the initiative order and calculate's its act
 
         else:
             print("Something not intended happened.")
-    
+          
 ui()
 alive()
-initiative()
