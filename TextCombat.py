@@ -1,5 +1,30 @@
 import random, sys, os, keyboard, subprocess, time
 
+################
+# Introduction #
+################
+def introduction():
+    check = 1
+    while check == 1:
+        print()
+        print("WELCOME TO DRAGONS ADVENTURE! Seems like you are the choosen one to defeat the enemies that been destroying our village.")
+        print("Yeah, nobody wanted the dirty work...（￣へ￣）")
+        print()
+        proceed = (input("Would you like to meet your party and enemies? Y/N: "))
+        if proceed  in ["N","n"]:
+            print ("Well, you don't really got a choice, let's continue ;)")
+        elif proceed in ["Y","y"]:
+            print ("Great, let's get started!")
+        else:
+            print()
+            print ("You are so unpredictable")
+        time.sleep(1)
+        check = 0
+        
+#####################
+# Characters Status #
+#####################
+
 class char_stats: #Creates a class with all necessary stats for the code to run properly
     def __init__(stat, name, max_hp, hp, mp, ap, wp, init, d20):
         stat.name = name
@@ -27,7 +52,6 @@ def name_into_variable(name): #this function converts a character's name into it
 
 def all_characters(): #Creates several characters with stats in the following order: Name, Max HP, Current HP, MP, AP, WP, init and diceroll (for the initiative function)
     #Character stats in function so it's easier to restart the stats to their initial values on a new game
-    
     global warrior, priest, orc, goblin, hobgoblin, kobold
 
     warrior = char_stats("warrior", 32, 32, 5, 2, 5, 2, 0) 
@@ -46,6 +70,10 @@ enemy = ("orc", "goblin", "hobgoblin" , "kobold")
 
 ally = ("warrior", "priest")
 
+####################
+# Combat Mechanics #
+####################
+
 atk_words = ["atk","Atk", "attack", "Attack"]
 
 magic_words = ["mag", "Mag", "magic", "Magic"]
@@ -57,6 +85,10 @@ exor_desc = "Exorcism: Corrupt and enemy's life essence. Inflicts between 2 and 
 mend_desc = "Mend: Repay some of a character's current debt to the Death god. Heals a character between 3 and 8. Costs 3 mana.\n"
 
 round_num = 1
+
+###############
+# Combat Zone #
+###############
 
 def alive(): #Checks if characters are alive, ends game if all allies or all enemies are dead
     global alive_char, dead_allies, dead_enemies
@@ -115,6 +147,11 @@ def initiative(): #Rolls a dice for each character and sorts them in order of mo
         atkorder = alive_char #this happens so the list of alive characters doesn't get sorted out of its original order
         atkorder.sort(key=lambda x: (x.d20), reverse = True) # Code based on answer by user Art on StackOverflow (https://stackoverflow.com/questions/67750705/python-sorting-based-on-class-attribute)
     
+ 
+###############
+#  Main Loop  #
+###############
+
 def Round(): #Gets a character from the initiative order and calculates its actions.
 
     global round_num
@@ -278,6 +315,7 @@ def end(answer): #At the end of the game it either restarts the game or closes t
 
 def game():
     all_characters()
+    introduction()
     while True:
         ui()
         alive()
