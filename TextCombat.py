@@ -21,36 +21,17 @@ def introduction():
         time.sleep(1)
         check = 0
 
-#Prints all item descriptions, one at a time in diferent paragraphs
-def freq(str): #Based on Code Python3 (https://www.geeksforgeeks.org/find-frequency-of-each-word-in-a-string-in-python/)
-    unique_words = set(str) 
-
-    for words in unique_words:
-        print('You have', str.count(words), words)
-if __name__ == "__main__":
-    str = "Crystal (+2 Attack)", "Mana Potion (+10 MP)", "Revival Item" #Items to print
- 
-    freq(str)
-    print()
-
-    print("That's all, not much but we are short on budget.")
-
-def item_showcase():
-    print ("Oh right! Before you start fighting, you can also use some items in your inventory to help your character's status in combat!（ミ￣ー￣ミ）")
-    print ("I will quickly show you your available items.")
-    print()
-    freq(str)
-
 #####################
 # Characters Status #
 #####################
 
 class char_stats: #Creates a class with all necessary stats for the code to run properly
-    def __init__(stat, name, max_hp, hp, mp, ap, wp, init, d20):
+    def __init__(stat, name, max_hp, hp, max_mp, mp, ap, wp, init, d20):
         stat.name = name
         stat.hp = hp 
         stat.max_hp = max_hp
-        stat.mp = mp 
+        stat.mp = mp
+        stat.max_mp = max_mp 
         stat.ap = ap
         stat.wp = wp
         stat.init = init
@@ -74,21 +55,21 @@ def all_characters(): #Creates several characters with stats in the following or
     #Character stats in function so it's easier to restart the stats to their initial values on a new game
     global warrior, priest, orc, goblin, hobgoblin, kobold
 
-    warrior = char_stats("warrior", 32, 32, 5, 2, 5, 2, 0) 
+    warrior = char_stats("warrior", 32, 32, 10, 10, 2, 5, 2, 0) 
 
-    priest = char_stats("Priest", 20, 20, 25, 0, 2, 6, 0) 
+    priest = char_stats("priest", 20, 20, 25, 25, 0, 2, 6, 0) 
 
-    orc = char_stats("Orc", 15, 15, 0, 1, 4, 2, 0)
+    orc = char_stats("orc", 15, 15, 0, 0, 1, 4, 2, 0)
 
-    goblin = char_stats("Goblin", 14, 14, 0, 1, 4, 2, 0)
+    goblin = char_stats("goblin", 14, 14, 0, 0, 1, 4, 2, 0)
 
-    hobgoblin = char_stats("Hobgoblin", 13, 13, 0, 1, 4, 2, 0)
+    hobgoblin = char_stats("hobgoblin", 13, 13, 0, 0, 1, 4, 2, 0)
 
-    kobold = char_stats("Kobold", 12, 12, 0, 1, 4, 2, 0)
+    kobold = char_stats("kobold", 12, 12, 0, 0, 1, 4, 2, 0)
 
-enemy = ("Orc", "goblin", "Hobgoblin" , "Kobold")
+enemy = ("orc", "goblin", "hobgoblin" , "kobold")
 
-ally = ("Warrior", "Priest")
+ally = ("warrior", "priest")
 
 class item:
     def __init__(self, uses):
@@ -119,6 +100,22 @@ round_num = 1
 ###############
 # Combat Zone #
 ###############
+def end_action(): #This makes so the code only continues when the down arrow is pressed and updates the ui
+        time.sleep(1)
+        print()
+        print("Press Down Arrow to Proceed")
+        while keyboard.is_pressed('down') != True:
+            pass
+        ui()
+
+def item_showcase():
+    global end_action
+    print()
+    print ("Oh right! Before you start fighting, you can also use some items in your inventory to help your character's status in combat!（ミ￣ー￣ミ）")
+    print ("I will quickly show you your available items.")
+    print()
+    print(f"{crystal.uses} Crystal (+2 Attack)\n{mana_potion.uses} Mana potion (+10 MP)\n{revive.uses} Revive")
+    end_action()
 
 def alive(): #Checks if characters are alive, ends game if all allies or all enemies are dead
     global alive_char, dead_allies, dead_enemies
@@ -153,7 +150,7 @@ def ui(): #UI function, prints alive characters separated from dead ones
     for character in enemy:
         character = name_into_variable(character)
         if character in alive_char:
-            print(f"\nEnemy:{character.name} Hp:{character.hp} Armor:{character.ap} Attack:{character.wp}")
+            print(f"\nEnemy: {character.name} Hp: {character.hp} Armor: {character.ap} Attack: {character.wp}")
     if len(dead_enemies) > 0:
         print(f"\nDead enemies:",*dead_enemies) #prints all elements from the list of dead enemies
     for character in ally:
@@ -178,20 +175,13 @@ def initiative(): #Rolls a dice for each character and sorts them in order of mo
         atkorder.sort(key=lambda x: (x.d20), reverse = True) # Code based on answer by user Art on StackOverflow (https://stackoverflow.com/questions/67750705/python-sorting-based-on-class-attribute)
     
  
-###############
-#  Main Loop  #
-###############
+#################
+# Main function #
+#################
 
 def Round(): #Gets a character from the initiative order and calculates its actions.
 
-    global round_num
-
-    def end_action(): #This makes so the code only continues when the down arrow is pressed and updates the ui
-        time.sleep(1)
-        print("press down arrow to proceed")
-        while keyboard.is_pressed('down') != True:
-            pass
-        ui()
+    global round_num, end_action
 
     def dmg_calc(attacking, defending):
         dmg_fin = attacking.wp - defending.ap
@@ -258,47 +248,56 @@ def Round(): #Gets a character from the initiative order and calculates its acti
 
     def item_use():
         nonlocal check
-        freq(str)
+        print(f"Available items:\n{crystal.uses} Crystal (+2 Attack)\n{mana_potion.uses} Mana potion (+10 MP)\n{revive.uses} Revive")
         item = input(f"\nWhat item do you want to use?\n")
         target = input(f"\nWhom do you want to use it on?\n")
-        if item == "Crystal" or item == "crystal":
-            if target in alive and target in ally:
-                if crystal.uses >= 0:
-                    target.wp += 2
-                    crystal.uses += -1
-                    check = 0
-                    print(f"{target} was powered up and has +2 attack.")
+        target = name_into_variable(target)
+        try:
+            if item == "Crystal" or item == "crystal":
+                if target in alive_char and target.name in ally:
+                    if crystal.uses > 0:
+                        target.wp += 2
+                        crystal.uses += -1
+                        check = 0
+                        print(f"{target.name} was powered up and has +2 attack.")
+                        end_action() #refreshes ui and stops code until user wishes to proceed
+                    else:
+                        print(f"No {item}s left to use.\n")
                 else:
-                    print(f"No {item}s left to use.\n")
-            else:
-                print(f"You can't do that \n")
+                    print(f"Chosen target not valid \n")
 
-        if item == "Mana_potion" or item == "mana_potion" or item == "mana" or item == "Mana":
-            if target in alive and target in ally:
-                if mana_potion.uses >= 0:
-                    target.mp += 10
-                    if target.mp > target.max_mp:
-                        target.mp = target.max_mp
-                    mana_potion.uses += -1
-                    check = 0
-                    print(f"{target} has restored 10 MP")
+            if item == "Mana potion" or item == "mana potion" or item == "mana" or item == "Mana":
+                if target in alive_char and target.name in ally:
+                    if mana_potion.uses > 0:
+                        target.mp += 10
+                        if target.mp > target.max_mp:
+                            target.mp = target.max_mp
+                        mana_potion.uses += -1
+                        check = 0
+                        print(f"{target.name} has restored 10 MP")
+                        end_action() #refreshes ui and stops code until user wishes to proceed
+                    else:
+                        print(f"No {item}s left to use.\n")
                 else:
-                    print(f"No {item}s left to use.\n")
-            else:
-                print(f"You can't do that.\n")
+                    print(f"Chosen target not valid\n")
 
-        if item == "Revive" or item == "revive":
-            if target in dead_allies and target in ally:
-                if revive.uses >= 0:
-                    target.hp == target.max_hp
-                    revive.uses += -1
-                    check = 0
-                    print(f"{target} has been revived\n")
+            if item == "Revive" or item == "revive":
+                if target in dead_allies and target in ally.name:
+                    if revive.uses > 0:
+                        target.hp == target.max_hp
+                        revive.uses += -1
+                        check = 0
+                        print(f"{target.name} has been revived\n")
+                        end_action() #refreshes ui and stops code until user wishes to proceed
+                    else:
+                        print(f"No {item}s left to use.")
                 else:
-                    print(f"No {item}s left to use.")
+                    print(f"Chosen target not valid\n")    
             else:
-                print(f"You cant do that\n")        
-
+                print(f"Chosen item not valid\n")    
+        except:
+            print(f"Chosen target not valid\n") 
+            
     for char in atkorder: #Selects each character in order of initiative
         name_char = char.name #gets the character name so the rest of the code can identify which character it is refering to
         check = 1 # this check exists so the code can know when the current character has finished its turn
@@ -373,7 +372,6 @@ def Round(): #Gets a character from the initiative order and calculates its acti
                                 print("Not Enough Mana")
                 elif action in item_words: #items were chosen
                     item_use()
-                    end_action() #refreshes ui and stops code until user wishes to proceed
                 else:
                     print("The character cant do that action.")
 
@@ -392,6 +390,7 @@ def end(answer): #At the end of the game it either restarts the game or closes t
 def game():
     all_characters()
     introduction()
+    item_showcase()
     while True:
         ui()
         alive()
