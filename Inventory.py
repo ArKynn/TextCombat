@@ -11,11 +11,11 @@ def freq(str): #Based on Code Python3 (https://www.geeksforgeeks.org/find-freque
     for words in unique_words:
         print('You have', str.count(words), words)
 if __name__ == "__main__":
-    str = "Bonus Damage Item (+2)", "Mana Potion (+10)", "Revival Item", "Whistle"
+    str = "Bonus Damage Item (+2)", "Mana Potion (+10)", "Revival Item", "Health Potion (+10)"
  
     freq(str)
     print()
 
-    print("That's all, not much but we are short on budget. However, you can find out what the whistle does later on.")
+    print("That's all, not much but we are short on budget.")
 
 
