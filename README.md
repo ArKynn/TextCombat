@@ -10,13 +10,31 @@
 
 ###### Implementação das mecânicas:
     » David Mendes
-    * Criação do Sistema de Combate
+        Criação do Sistema de Combate
+        Adição de Novos Personagens
 
-    Gilherme Negrinho:
+    » Guilherme Negrinho:
+        Implmentação do Inventário
+        Introdução ao Jogo
+        Limpeza da Interface
     
 ###### Repositório git:
 https://github.com/ArKynn/TextCombat
 
 ###### Arquitetura do código:
 
+
 ###### Referências:
+    - Lançar um dado de 20 para Iniciativa;
+    - Classificação em ordem de maior para menor Init;
+    
+    Recurso: Resposta de "user jws1"
+    https://stackoverflow.com/questions/60193710/python-d20-dice-rolling-program
+    
+    - Personagens vivos não seja desqualficiados da lista original;
+    Recurso: Reposta de "user Art"
+    https://stackoverflow.com/questions/67750705/python-sorting-based-on-class-attribute
+    
+    - Criar uma segunda simulação sem encerramento total do sistema;
+    Recurso:
+    https://maschituts.com/how-to-restart-a-program-in-python-explained/
