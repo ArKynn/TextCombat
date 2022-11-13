@@ -9,7 +9,7 @@
 * Guilherme Negrinho (22207383)
 
 ###### Implementação das mecânicas:
-    » David Mendes
+    » David Mendes:
         Criação do Sistema de Combate
         Adição de Novos Personagens
 
