@@ -1,5 +1,6 @@
 import random, sys, os, keyboard, subprocess, time
 
+
 ################
 # Introduction #
 ################
@@ -15,6 +16,7 @@ def introduction():
             print ("Well, you don't really got a choice, let's continue ;)")
         elif proceed in ["Y","y"]:
             print ("Great, let's get started!")
+            print()
         else:
             print()
             print ("You are so unpredictable")
@@ -61,14 +63,19 @@ class char_stats: #Creates a class with all necessary stats for the code to run 
 def name_into_variable(name): #this function converts a character's name into it's variable so other functions can work 
         if name == "priest":
             return priest
+            print()
         elif name == "warrior":
             return warrior
+            print()
         elif name == "orc":
             return orc
+            print()
         elif name == "goblin":
             return goblin
+            print()
         elif name == "kobold":
             return kobold
+            print()
         elif name == "hobgoblin":
             return hobgoblin
 
@@ -123,7 +130,6 @@ round_num = 1
 ###############
 def end_action(): #This makes so the code only continues when the down arrow is pressed and updates the ui
         time.sleep(1)
-        print()
         print("Press Down Arrow to Proceed")
         while keyboard.is_pressed('down') != True:
             pass
@@ -138,8 +144,10 @@ def item_showcase():
     proceed = (input("Would you like to check them out? Y/N: "))
     if proceed  in ["N","n"]:
         print ("I will show them, anyways. ;)")
+        print()
     elif proceed in ["Y","y"]:
         print ("Cool, thank you.")
+        print()
     else:
         print()
         print ("Don't do it, just don't.")
@@ -164,7 +172,7 @@ def alive(): #Checks if characters are alive, ends game if all allies or all ene
                 dead_allies.append(char.name)
 
     if len(dead_allies) == len(ally):
-        ans = input(f"All allies have been slain.\nWould you like to play again? (Y/N)\n")
+        ans = input("All allies have been slain.\nWould you like to play again? (Y/N)\n")
         end(ans)
     elif len(dead_enemies) == len(enemy):
         ans = input(f"All enemies have been slain.\nWould you like to play again? (Y/N)\n")
@@ -332,9 +340,9 @@ def Round(): #Gets a character from the initiative order and calculates its acti
         name_char = char.name #gets the character name so the rest of the code can identify which character it is refering to
         check = 1 # this check exists so the code can know when the current character has finished its turn
 
-        print(f"\nThe {name_char} is preparing to act\n")
+        print(f"\nThe {name_char} is preparing to Act\n")
         time.sleep(1)
-        print("press down arrow to proceed")
+        print("Press Down Arrow to Proceed")
         while True:
             if keyboard.is_pressed('down'):
                 break
