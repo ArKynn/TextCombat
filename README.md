@@ -27,7 +27,6 @@ https://github.com/ArKynn/TextCombat
 ###### Referências:
     - Lançar um dado de 20 para Iniciativa;
     - Classificação em ordem de maior para menor Init;
-    
     Recurso: Resposta de "user jws1"
     https://stackoverflow.com/questions/60193710/python-d20-dice-rolling-program
     
