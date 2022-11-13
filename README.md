@@ -31,7 +31,7 @@ https://github.com/ArKynn/TextCombat
     Recurso: Resposta de "user jws1"
     https://stackoverflow.com/questions/60193710/python-d20-dice-rolling-program
     
-    - Personagens vivos não seja desqualficiados da lista original;
+    - Personagens vivos não seja desqualificados da lista original;
     Recurso: Reposta de "user Art"
     https://stackoverflow.com/questions/67750705/python-sorting-based-on-class-attribute
     
