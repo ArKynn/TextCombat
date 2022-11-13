@@ -1,6 +1,6 @@
-import random, os, keyboard
+import random, sys, os, keyboard, subprocess
 
-class char_stats:
+class char_stats: #Creates a class with all necessary stats for the code to run properly
     def __init__(stat, name, max_hp, hp, mp, ap, wp, init, d20):
         stat.name = name
         stat.hp = hp 
@@ -11,21 +11,39 @@ class char_stats:
         stat.init = init
         stat.d20 = d20
 
-warrior = char_stats("warrior",32 , 32, 5, 2, 5, 2, 0) #Warrior stats in order: Name,MaxHP , current HP, MP, AP, WP, Init, dice roll
+def name_into_variable(name): #this function converts a character's name into it's variable so other functions can work 
+        if name == "priest":
+            return priest
+        elif name == "warrior":
+            return warrior
+        elif name == "orc":
+            return orc
+        elif name == "goblin":
+            return goblin
+        elif name == "kobold":
+            return kobold
+        elif name == "hobgoblin":
+            return hobgoblin
 
-priest = char_stats("priest", 20, 20, 25, 0, 2, 6, 0) #Priest stats in order: Name, MaxHp, current HP, MP, AP, WP, Init, dice roll
+def all_characters(): #Creates several characters with stats in the following order: Name, Max HP, Current HP, MP, AP, WP, init and diceroll (for the initiative function)
+    #Character stats in function so it's easier to restart the stats to their initial values on a new game
+    global warrior, priest, orc, goblin, hobgoblin, kobold
 
-orc = char_stats("orc", 15, 15, 0, 2, 2, 2, 0) #Orc stats in order: Name, MaxHP, current HP, MP, AP, WP, Init, dice roll
+    warrior = char_stats("warrior", 32, 32, 5, 2, 5, 2, 0) 
 
-goblin = char_stats("goblin", 14, 14, 0, 2, 2, 2, 0) #Goblin stats in order: Name, MaxHP, current HP, MP, AP, WP, Init, dice roll
+    priest = char_stats("priest", 20, 20, 25, 0, 2, 6, 0) 
 
-hobgoblin = char_stats("hobgoblin",13, 13, 0, 2, 2, 2, 0) #Hobgoblin stats in order: Name, MaxHP, current HP, MP, AP, WP, Init, dice roll
+    orc = char_stats("orc", 15, 15, 0, 1, 4, 2, 0)
 
-kobold = char_stats("kobold", 12, 12, 0, 2, 2, 2, 0) #Kobold stats in order: Name, MaxHP, current HP MP, AP, WP, Init, dice roll
+    goblin = char_stats("goblin", 14, 14, 0, 1, 4, 2, 0)
 
-enemy = ("orc","goblin", "hobgoblin", "kobold") #Tuple of enemy chars
+    hobgoblin = char_stats("hobgoblin", 13, 13, 0, 1, 4, 2, 0)
 
-ally = ("warrior", "priest") #Tuple of allied chars
+    kobold = char_stats("kobold", 12, 12, 0, 1, 4, 2, 0)
+
+enemy = ("orc", "goblin", "hobgoblin" , "kobold")
+
+ally = ("warrior", "priest")
 
 atk_words = ["atk","Atk", "attack", "Attack"]
 
@@ -37,28 +55,51 @@ exor_desc = "Exorcism: Corrupt and enemy's life essence. Inflicts between 2 and 
 
 mend_desc = "Mend: Repay some of a character's current debt to the Death god. Heals a character between 3 and 8. Costs 3 mana.\n"
 
-def ui(): #Basic ui (Might change later)
+round_num = 1
+
+def alive(): #Checks if characters are alive, ends game if all allies or all enemies are dead
+    global alive_char, dead_allies, dead_enemies
+    chars = [warrior, priest, orc, goblin, hobgoblin, kobold]
+    alive_char = []
+    dead_allies = []
+    dead_enemies = []
+    for char in chars:
+        if char.hp > 0:
+            alive_char.append(char)
+        else:
+            char.hp = 0
+            if char.name in enemy:
+                dead_enemies.append(char.name)
+            if char.name in ally:
+                dead_allies.append(char.name)
+
+    if len(dead_allies) == len(ally):
+        ans = input(f"All allies have been slain.\nWould you like to play again? (Y/N)\n")
+        end(ans)
+    elif len(dead_enemies) == len(enemy):
+        ans = input(f"All enemies have been slain.\nWould you like to play again? (Y/N)\n")
+        end(ans)
+
+def ui(): #UI function, prints alive characters separated from dead ones
     clearconsole = lambda: os.system('cls' if os.name in ('nt', 'dos') else 'clear')
     clearconsole() #clears the console so it doesn't get cluttered
 
-    alive()
-    ui_enemy = [] # List of all enemy characters alive to print in ui
-    ui_ally = [] # List of all allied characters alive to print in ui
-    for character in chars:
-        if character in alive and character in enemy: #checks if a character is alive and is an enemy
-            ui_enemy.append(character)
-        elif character in alive and character in ally: #checks if a character is alive and is an ally
-            ui_ally.append(character)
-    for character in ui_enemy:
-        print(f"Enemy:{ui.enemy[character]} Hp:{ui.enemy[character].hp} Armor")
-
-def alive(): #Checks if character is alive
-    global alive, chars
-    chars = [warrior, priest, orc, goblin, hobgoblin, kobold]
-    alive = []
-    for char in chars:
-        if char.hp > 0:
-            alive.append(char)
+    alive() 
+    print(f"Round {round_num}")
+    #Checks every character alive state and either prints their stats or marks them as dead
+    for character in enemy:
+        character = name_into_variable(character)
+        if character in alive_char:
+            print(f"\nEnemy:{character.name} Hp:{character.hp} Armor:{character.ap} Attack:{character.wp}")
+    if len(dead_enemies) > 0:
+        print(f"\nDead enemies:",*dead_enemies) #prints all elements from the list of dead enemies
+    for character in ally:
+        character = name_into_variable(character) 
+        if character in alive_char:
+            print(f"\nAlly:{character.name} Hp:{character.hp} MP:{character.mp} Armor:{character.ap} Attack:{character.wp}")
+    if len(dead_allies) > 0:
+        print(f"Dead allies:",*dead_allies)
+    
 
 def initiative(): #Rolls a dice for each character and sorts them in order of most to least initiative
     global atkorder
@@ -68,13 +109,17 @@ def initiative(): #Rolls a dice for each character and sorts them in order of mo
         total += random.randint(1,20)
         return total
 
-    for char in alive:
+    for char in alive_char:
         char.d20 = d20() + char.init
-        atkorder = alive
+        atkorder = alive_char #this happens so the list of alive characters doesn't get sorted out of its original order
         atkorder.sort(key=lambda x: (x.d20), reverse = True) # Code based on answer by user Art on StackOverflow (https://stackoverflow.com/questions/67750705/python-sorting-based-on-class-attribute)
-
+    
+ 
 def Round(): #Gets a character from the initiative order and calculates its actions.
-    def end_action(): #This makes so the code only continues when the down arrow is pressed
+
+    global round_num
+
+    def end_action(): #This makes so the code only continues when the down arrow is pressed and updates the ui
         print("press down arrow to proceed")
         while True:
             if keyboard.is_pressed('down'):
@@ -87,20 +132,6 @@ def Round(): #Gets a character from the initiative order and calculates its acti
             dmg_fin = 0
         return int(dmg_fin)
 
-    def answer_into_character(ans): #this function converts a character's name into it's variable so the dmg_calc and spell functions can work
-        if ans == "priest":
-            return priest
-        elif ans == "warrior":
-            return warrior
-        elif ans == "orc":
-            return orc
-        elif ans == "goblin":
-            return goblin
-        elif ans == "kobold":
-            return kobold
-        elif ans == "hobgoblin":
-            return hobgoblin
-
     def d4():
         total = 0
         total += random.randint(1,4)
@@ -112,114 +143,139 @@ def Round(): #Gets a character from the initiative order and calculates its acti
         return total
 
     def rushdown(attacking, defending):
-        dmg = attacking.wp + d4()
-        defending.hp = defending.hp - dmg
-        print(f"The {attacking.name} rushed into the {defending.name} and delt {dmg} damage")
-    
+        nonlocal check
+
+        try:
+            if defending.name in enemy and defending in alive_char: #checks if target is an enemy and is alive
+                dmg = attacking.wp + d4()
+                defending.hp = defending.hp - dmg
+                attacking.mp += -5
+                check = 0
+                print(f"The {attacking.name} rushed into the {defending.name} and delt {dmg} damage")
+                end_action() #stops code until user wishes to proceed and then refreshes ui
+            else:
+                print("Chosen target not valid.\n")
+        except:
+            print("Chosen target not valid.\n")
+        
     def exorcism(attacking, defending):
-        dmg = d4() * 2
-        defending.hp = defending.hp - dmg
-        print(f"The {attacking.name} exorcised the {defending.name} and delt {dmg} damage")
+        nonlocal check
+
+        try:
+            if defending.name in enemy and defending in alive_char: #checks if target is an enemy and is alive
+                dmg = d4() * 2
+                defending.hp = defending.hp - dmg
+                print(f"The {attacking.name} exorcised the {defending.name} and delt {dmg} damage")
+                check = 0
+                end_action() #refreshes ui and stops code until user wishes to proceed
+            else:
+                print("Chosen target not valid.\n")
+        except:
+            print("Chosen target not valid.\n")
 
     def mend(healer, healed):
-        heal = healer.wp + d6()
-        if healed.max_hp < healed.hp + heal:
-            healed.hp = healed.max_hp
-        else:
-            healed.hp = healed.hp + heal
-        print(f"The {healer.name} healed the {healed.name} for {heal} damage")
-
-    num_char = -1 #This refers to the caracter in the list of characters in order of initiative and goes up by one for each character
+        try:
+            if target.name in ally and target in alive_char:  #checks if target is an ally and is alive
+                heal = healer.wp + d6()
+                if healed.max_hp < healed.hp + heal:
+                    healed.hp = healed.max_hp
+                else:
+                    healed.hp = healed.hp + heal
+                check = 0
+                end_action() #refreshes ui and stops code until user wishes to proceed
+            else:
+                print("Chosen target not valid.\n")
+        except:
+            print("Chosen target not valid.\n")
 
     for char in atkorder: #Selects each character in order of initiative
-        num_char += 1 
-        name_char = atkorder[num_char].name #gets the character name so the rest of the code can identify which character it is refering to
+        name_char = char.name #gets the character name so the rest of the code can identify which character it is refering to
+        check = 1 # this check exists so the code can know when the current character has finished its turn
 
         if name_char in enemy: #if selected character is an enemy just calculates its dmg
-            chosen = random.choice((ally)) #chooses randomly one allied characters to attack
-            chosen.hp = chosen.hp - dmg_calc(char, chosen)
-            print(f"\nEnemy {name_char} attacked allied {chosen.name} and dealt {dmg_calc(char, chosen)} damage.")
-            end_action()
-            
-        elif name_char in ally: #if selected character is an ally it enters the action screen
-            check = 1 # this check exists so the code can know when an allied character has finished its turn
             while check == 1:
-                print(f"It's time for the {name_char} to do an action!\nWhat should the {name_char} do?\nThe {name_char} can either Attack or cast Magic")
+                chosen =  random.choice(ally) #chooses randomly one allied character to attack
+                chosen = name_into_variable(chosen)
+                if chosen in alive_char:
+                    chosen.hp = chosen.hp - dmg_calc(char, chosen)
+                    print(f"\nEnemy {name_char} attacked allied {chosen.name} and dealt {dmg_calc(char, chosen)} damage.")
+                    check = 0
+                    end_action()
+                
+        elif name_char in ally: #if selected character is an ally it enters the action screen
+            while check == 1:
+                print(f"\nIt's time for the {name_char} to do an action!\nWhat should the {name_char} do?\nThe {name_char} can either Attack or cast Magic")
                 action = input()
+
                 if action in atk_words: #Attack action was chosen
-                        atkenemy = input(f"Which enemy should {name_char} attack?\n")
-                        if atkenemy in enemy: #Checks if targeted character is an enemy
-                            atkenemy = answer_into_character(atkenemy)
-                            atkenemy.hp = dmg_calc(char, atkenemy)
-                            print(f"The allied {name_char} attacked enemy {atkenemy.name} and dealt {dmg_calc(char, atkenemy)} damage.")
+                    target = input(f"Which enemy should {name_char} attack?\n")
+                    target = name_into_variable(target)
+                    try:
+                        if target.name in enemy and target in alive_char: #Checks if targeted character is an enemy and is alive
+                            target.hp = target.hp - dmg_calc(name_into_variable(name_char), target)
+                            print(f"The allied {name_char} attacked enemy {target.name} and dealt {dmg_calc(char, target)} damage.")
                             end_action() #refreshes ui and stops code until user wishes to proceed
                             check = 0
                         else:
                             print(f"\nChosen target not valid.\n")
+                    except:
+                        print("Chosen target not valid.\n")    
 
                 elif action in magic_words: #Magic action was chosen
                     print(f"The alied {name_char} can cast the following magic:\n")
-                    while check == 1:
 
-                        if char == warrior:  #checks if current character is a warrior
-                            print(rush_desc)
+                    if char == warrior:  #checks if current character is a warrior
+                        print(rush_desc)
+                        if char.mp >= 5:
                             target = input(f"Who do you want to attack?\n")
-                            if target in enemy: #checks if target is an enemy
-                                target = answer_into_character(target)
-                                rushdown(char, target)
-                                end_action() #refreshes ui and stops code until user wishes to proceed
-                                check = 0
-                            else:
-                                print("Invalid target\n")
+                            target = name_into_variable(target)
+                            rushdown(char, target)
+                        else:
+                            print("Not Enough Mana")
 
-                        elif char == priest: #checks if current character is a priest
-                            print(f"{exor_desc}\n{mend_desc}")
-                            spell = input(f"Which spell do you want to use?\n")
-                            if spell == "Exorcism" or spell == "exorcism":
+                    elif char == priest: #checks if current character is a priest
+                        print(f"{exor_desc}\n{mend_desc}")
+                        spell = input(f"Which spell do you want to use?\n")
+
+                        if spell == "Exorcism" or spell == "exorcism":
+                            if char.mp >= 5:
                                 target = input(f"Who do you want to attack?\n")
-                                if target in enemy: #checks if target is an enemy
-                                    target = answer_into_character(target)
-                                    exorcism(char, target)
-                                    end_action() #refreshes ui and stops code until user wishes to proceed
-                                    check = 0
-                                else: 
-                                    print("Chosen target not valid.\n")
-                            elif spell == "Mend" or spell == "mend":
+                                target = name_into_variable(target)
+                                exorcism(char, target)
+                                
+                            else:
+                                print("Not Enough Mana")
+
+                        elif spell == "Mend" or spell == "mend":
+                            if char.mp >= 3:
                                 target = input(f"Who do you want to heal?\n")
-                                if target in ally:  #checks if target is an ally
-                                    target = answer_into_character(target)
-                                    mend(char, target)
-                                    end_action() #refreshes ui and stops code until user wishes to proceed
-                                    check = 0
-                                else:
-                                    print("Chosen target not valid\n")
+                                target = name_into_variable(target)
+                                mend(char, target)
+                                end_action() #refreshes ui and stops code until user wishes to proceed
+                            else:
+                                print("Not Enough Mana")
                 else:
                     print("The character cant do that action.")
 
         else:
             print("Something not intended happened.")
-ui()
-alive()
-initiative()
-Round()
 
+    round_num += 1
 
+def end(answer): #At the end of the game it either restarts the game or closes the program
+        if answer == "y" or answer == "Y":
+            #This bit of code creates a second game without closing the console and closes the first game so it doesn't show up if you finish the seccond game
+            subprocess.call([sys.executable, os.path.realpath(__file__)] + sys.argv[1:]) # Original code found at https://maschituts.com/how-to-restart-a-program-in-python-explained/
+            sys.exit() #without this, when the second game created above was closed, the first game would appear again and rerun itself
+        elif answer == "n" or answer == "N":
+            sys.exit()
 
-def ui(): #Basic ui (Might change later)
-    clearconsole = lambda: os.system('cls' if os.name in ('nt', 'dos') else 'clear')
-    clearconsole()
+def game():
+    all_characters()
+    while True:
+        ui()
+        alive()
+        initiative()
+        Round()
 
-    print("Enemy: Orc            Enemy: Goblin           Enemy: Hobgoblin           Enemy: Kobold")
-    print(f"HP:{orc.hp}                 HP:{goblin.hp}                   HP:{hobgoblin.hp}                      HP:{kobold.hp}")
-    print(f"MP:{orc.mp}                  MP:{goblin.mp}                    MP:{hobgoblin.mp}                       MP:{kobold.mp}")
-    print(f"AP:{orc.ap}                  AP:{goblin.ap}                    AP:{hobgoblin.ap}                       AP:{kobold.ap}")
-    print(f"WP:{orc.wp}                  WP:{goblin.wp}                    WP:{hobgoblin.wp}                       WP:{kobold.wp}")
-    print(f"Init:{orc.init}                Init:{goblin.init}                  Init:{hobgoblin.init}                     Init:{kobold.init}")
-
-    print(f"\n\n\n\n\n")
-    print(f"Ally: Warrior               Ally: Priest")
-    print(f"HP:{warrior.hp}                       HP:{priest.hp}")
-    print(f"MP:{warrior.mp}                        MP:{priest.mp}")
-    print(f"AP:{warrior.ap}                        AP:{priest.ap}")
-    print(f"WP:{warrior.wp}                        WP:{priest.wp}")
-    print(f"Init:{warrior.init}                      InitP:{priest.init}")
+game()
