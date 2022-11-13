@@ -1,4 +1,4 @@
-import random, sys, os, keyboard, subprocess
+import random, sys, os, keyboard, subprocess, time
 
 class char_stats: #Creates a class with all necessary stats for the code to run properly
     def __init__(stat, name, max_hp, hp, mp, ap, wp, init, d20):
@@ -120,10 +120,10 @@ def Round(): #Gets a character from the initiative order and calculates its acti
     global round_num
 
     def end_action(): #This makes so the code only continues when the down arrow is pressed and updates the ui
+        time.sleep(1)
         print("press down arrow to proceed")
-        while True:
-            if keyboard.is_pressed('down'):
-                break
+        while keyboard.is_pressed('down') != True:
+            pass
         ui()
 
     def dmg_calc(attacking, defending):
@@ -174,6 +174,7 @@ def Round(): #Gets a character from the initiative order and calculates its acti
             print("Chosen target not valid.\n")
 
     def mend(healer, healed):
+        nonlocal check
         try:
             if target.name in ally and target in alive_char:  #checks if target is an ally and is alive
                 heal = healer.wp + d6()
@@ -192,6 +193,12 @@ def Round(): #Gets a character from the initiative order and calculates its acti
         name_char = char.name #gets the character name so the rest of the code can identify which character it is refering to
         check = 1 # this check exists so the code can know when the current character has finished its turn
 
+        print(f"\nThe {name_char} is preparing to act\n")
+        time.sleep(1)
+        print("press down arrow to proceed")
+        while True:
+            if keyboard.is_pressed('down'):
+                break
         if name_char in enemy: #if selected character is an enemy just calculates its dmg
             while check == 1:
                 chosen =  random.choice(ally) #chooses randomly one allied character to attack
@@ -208,12 +215,12 @@ def Round(): #Gets a character from the initiative order and calculates its acti
                 action = input()
 
                 if action in atk_words: #Attack action was chosen
-                    target = input(f"Which enemy should {name_char} attack?\n")
+                    target = input(f"\nWhich enemy should {name_char} attack?\n")
                     target = name_into_variable(target)
                     try:
                         if target.name in enemy and target in alive_char: #Checks if targeted character is an enemy and is alive
                             target.hp = target.hp - dmg_calc(name_into_variable(name_char), target)
-                            print(f"The allied {name_char} attacked enemy {target.name} and dealt {dmg_calc(char, target)} damage.")
+                            print(f"\nThe allied {name_char} attacked enemy {target.name} and dealt {dmg_calc(char, target)} damage.")
                             end_action() #refreshes ui and stops code until user wishes to proceed
                             check = 0
                         else:
@@ -259,7 +266,6 @@ def Round(): #Gets a character from the initiative order and calculates its acti
 
         else:
             print("Something not intended happened.")
-
     round_num += 1
 
 def end(answer): #At the end of the game it either restarts the game or closes the program
