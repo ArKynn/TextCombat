@@ -21,6 +21,27 @@ def introduction():
         time.sleep(1)
         check = 0
 
+        print("""
+                            Enemies
+
+        - Name: Orc       - Name: Goblin       - Name: Kobold       -Name:Hobgblin
+        - HP: 15          - HP: 14             - HP: 12             -Hp: 13
+        - MP: 0           - MP: 0              - MP: 0              -MP: 0
+        - AP: 2           - AP: 1              - AP: 1              -AP: 1
+        - WP: 2           - WP: 4              - WP: 4              -WP: 4
+        - Init: 2         - Init: 2            - Init: 2            -Init: 2
+
+                            Playable
+
+        - Name: Warrior   - Name: Priest
+        - HP: 32          - HP: 20
+        - MP: 20          - MP: 25
+        - AP: 2           - AP: 0
+        - WP: 5           - WP: 2
+        - Init: 2         - Init: 6
+
+            """)
+
 #####################
 # Characters Status #
 #####################
@@ -114,6 +135,15 @@ def item_showcase():
     print ("Oh right! Before you start fighting, you can also use some items in your inventory to help your character's status in combat!（ミ￣ー￣ミ）")
     print ("I will quickly show you your available items.")
     print()
+    proceed = (input("Would you like to check them out? Y/N: "))
+    if proceed  in ["N","n"]:
+        print ("I will show them, anyways. ;)")
+    elif proceed in ["Y","y"]:
+        print ("Cool, thank you.")
+    else:
+        print()
+        print ("Don't do it, just don't.")
+        print()
     print(f"{crystal.uses} Crystal (+2 Attack)\n{mana_potion.uses} Mana potion (+10 MP)\n{revive.uses} Revive")
     end_action()
 
@@ -156,7 +186,7 @@ def ui(): #UI function, prints alive characters separated from dead ones
     for character in ally:
         character = name_into_variable(character) 
         if character in alive_char:
-            print(f"\nAlly:{character.name} Hp:{character.hp} MP:{character.mp} Armor:{character.ap} Attack:{character.wp}")
+            print(f"\nAlly: {character.name} Hp: {character.hp} MP: {character.mp} Armor: {character.ap} Attack: {character.wp}")
     if len(dead_allies) > 0:
         print(f"Dead allies:",*dead_allies)
     
