@@ -20,7 +20,27 @@ def introduction():
             print ("You are so unpredictable")
         time.sleep(1)
         check = 0
-        
+
+#Prints all item descriptions, one at a time in diferent paragraphs
+def freq(str): #Based on Code Python3 (https://www.geeksforgeeks.org/find-frequency-of-each-word-in-a-string-in-python/)
+    unique_words = set(str) 
+
+    for words in unique_words:
+        print('You have', str.count(words), words)
+if __name__ == "__main__":
+    str = "Crystal (+2 Attack)", "Mana Potion (+10 MP)", "Revival Item" #Items to print
+ 
+    freq(str)
+    print()
+
+    print("That's all, not much but we are short on budget.")
+
+def item_showcase():
+    print ("Oh right! Before you start fighting, you can also use some items in your inventory to help your character's status in combat!（ミ￣ー￣ミ）")
+    print ("I will quickly show you your available items.")
+    print()
+    freq(str)
+
 #####################
 # Characters Status #
 #####################
@@ -56,19 +76,27 @@ def all_characters(): #Creates several characters with stats in the following or
 
     warrior = char_stats("warrior", 32, 32, 5, 2, 5, 2, 0) 
 
-    priest = char_stats("priest", 20, 20, 25, 0, 2, 6, 0) 
+    priest = char_stats("Priest", 20, 20, 25, 0, 2, 6, 0) 
 
-    orc = char_stats("orc", 15, 15, 0, 1, 4, 2, 0)
+    orc = char_stats("Orc", 15, 15, 0, 1, 4, 2, 0)
 
-    goblin = char_stats("goblin", 14, 14, 0, 1, 4, 2, 0)
+    goblin = char_stats("Goblin", 14, 14, 0, 1, 4, 2, 0)
 
-    hobgoblin = char_stats("hobgoblin", 13, 13, 0, 1, 4, 2, 0)
+    hobgoblin = char_stats("Hobgoblin", 13, 13, 0, 1, 4, 2, 0)
 
-    kobold = char_stats("kobold", 12, 12, 0, 1, 4, 2, 0)
+    kobold = char_stats("Kobold", 12, 12, 0, 1, 4, 2, 0)
 
-enemy = ("orc", "goblin", "hobgoblin" , "kobold")
+enemy = ("Orc", "goblin", "Hobgoblin" , "Kobold")
 
-ally = ("warrior", "priest")
+ally = ("Warrior", "Priest")
+
+class item:
+    def __init__(self, uses):
+        self.uses = uses
+
+crystal = item(1)
+mana_potion = item(1)
+revive = item(1)
 
 ####################
 # Combat Mechanics #
@@ -77,6 +105,8 @@ ally = ("warrior", "priest")
 atk_words = ["atk","Atk", "attack", "Attack"]
 
 magic_words = ["mag", "Mag", "magic", "Magic"]
+
+item_words = ["itm", "Itm", "item", "Item"]
 
 rush_desc = "Rushdown: Rushes into the enemy, tackling them into the ground. Inflicts between 6 and 9 damage. Costs 5 mana.\n"
 
@@ -226,6 +256,49 @@ def Round(): #Gets a character from the initiative order and calculates its acti
         except:
             print("Chosen target not valid.\n")
 
+    def item_use():
+        nonlocal check
+        freq(str)
+        item = input(f"\nWhat item do you want to use?\n")
+        target = input(f"\nWhom do you want to use it on?\n")
+        if item == "Crystal" or item == "crystal":
+            if target in alive and target in ally:
+                if crystal.uses >= 0:
+                    target.wp += 2
+                    crystal.uses += -1
+                    check = 0
+                    print(f"{target} was powered up and has +2 attack.")
+                else:
+                    print(f"No {item}s left to use.\n")
+            else:
+                print(f"You can't do that \n")
+
+        if item == "Mana_potion" or item == "mana_potion" or item == "mana" or item == "Mana":
+            if target in alive and target in ally:
+                if mana_potion.uses >= 0:
+                    target.mp += 10
+                    if target.mp > target.max_mp:
+                        target.mp = target.max_mp
+                    mana_potion.uses += -1
+                    check = 0
+                    print(f"{target} has restored 10 MP")
+                else:
+                    print(f"No {item}s left to use.\n")
+            else:
+                print(f"You can't do that.\n")
+
+        if item == "Revive" or item == "revive":
+            if target in dead_allies and target in ally:
+                if revive.uses >= 0:
+                    target.hp == target.max_hp
+                    revive.uses += -1
+                    check = 0
+                    print(f"{target} has been revived\n")
+                else:
+                    print(f"No {item}s left to use.")
+            else:
+                print(f"You cant do that\n")        
+
     for char in atkorder: #Selects each character in order of initiative
         name_char = char.name #gets the character name so the rest of the code can identify which character it is refering to
         check = 1 # this check exists so the code can know when the current character has finished its turn
@@ -248,7 +321,7 @@ def Round(): #Gets a character from the initiative order and calculates its acti
                 
         elif name_char in ally: #if selected character is an ally it enters the action screen
             while check == 1:
-                print(f"\nIt's time for the {name_char} to do an action!\nWhat should the {name_char} do?\nThe {name_char} can either Attack or cast Magic")
+                print(f"\nIt's time for the {name_char} to do an action!\nWhat should the {name_char} do?\nThe {name_char} can either Attack, use an item or cast Magic")
                 action = input()
 
                 if action in atk_words: #Attack action was chosen
@@ -298,6 +371,9 @@ def Round(): #Gets a character from the initiative order and calculates its acti
                                 end_action() #refreshes ui and stops code until user wishes to proceed
                             else:
                                 print("Not Enough Mana")
+                elif action in item_words: #items were chosen
+                    item_use()
+                    end_action() #refreshes ui and stops code until user wishes to proceed
                 else:
                     print("The character cant do that action.")
 
