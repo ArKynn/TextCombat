@@ -17,6 +17,7 @@
         Implmentação do Inventário
         Introdução ao Jogo
         Limpeza da Interface
+        Criação do Markdown
     
 ###### Repositório git:
 https://github.com/ArKynn/TextCombat
